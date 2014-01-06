@@ -139,6 +139,27 @@ describe ImasCG::Service do
     end
   end
 
+  context 'で#get_statusする場合' do
+    it 'は#requestを"mypage"で呼び出す' do
+      @service.should_receive(:request).with(:get, 'mypage').and_return('')
+      @service.get_status.should eql nil
+    end
+
+    it 'は#requestの戻り値をハッシュに変換する' do
+      @service.should_receive(:request).with(:get, 'mypage').and_return(html 'mypage.html')
+      @service.get_status.should eql ({
+        stamina: 37,
+        stamina_max: 300,
+        offence: 3,
+        offence_max: 184,
+        diffence: 140,
+        diffence_max: 141,
+        money: 1_499_172,
+        fan: 645969,
+      })
+    end
+  end
+
   # context "でheadする場合" do
   #   it "は戻り値がreturnである" do
   #     @service.should_receive(:send).with(:head, 'path').and_return('return')
