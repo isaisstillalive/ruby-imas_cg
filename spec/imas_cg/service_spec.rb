@@ -4,102 +4,117 @@ require_relative '../spec_helper.rb'
 
 describe ImasCG::Service do
   let(:service){ ImasCG::Service.new 'id' }
+  let(:conn){ service.instance_variable_get(:@conn) }
+  let(:handlers){ conn.builder.handlers }
 
   context 'を初期化する場合' do
-    let(:conn){ service.instance_variable_get(:@conn) }
+    context 'に"id"を渡した場合' do
+      let(:service){ ImasCG::Service.new 'id' }
 
-    context 'sidのみならば' do
-      subject(:service){ ImasCG::Service.new 'id' }
+      describe '#sid' do
+        subject{ service.sid }
 
-      it '#sidが第一引数である' do
-        expect( service.sid ).to eql 'id'
-        expect( conn.options[:sid] ).to include 'id'
+        it 'は"id"である' do
+          expect( subject ).to eql 'id'
+        end
       end
 
-      it 'ログ出力しない' do
-        expect( conn.builder.handlers ).not_to include Faraday::Response::Logger
-      end
-    end
-
-    context 'sidとオプション { logging: true } を指定すれば' do
-      subject(:service){ ImasCG::Service.new 'id', logging: true }
-
-      it '#sidが第一引数である' do
-        expect( service.sid ).to eql 'id'
-        expect( conn.options[:sid] ).to include 'id'
-      end
-
-      it 'ログ出力する' do
-        expect( conn.builder.handlers ).to include Faraday::Response::Logger
-      end
-    end
-  end
-
-  context 'で#request_listする場合' do
-    before do
-      service.should_receive(:request).with(:method, 'path', nil).and_return('0123456789')
-    end
-
-    context 'ブロックを渡さなければ' do
-      subject(:request_list){ service.__send__(:request_list, :method, 'path', nil, /\d/m) }
-
-      it '#requestを呼び出し、戻り値を配列に変換する' do
-        expect( request_list ).to eql %w{0 1 2 3 4 5 6 7 8 9}
+      it 'はログ出力を行わない' do
+        expect( handlers ).not_to include Faraday::Response::Logger
       end
     end
 
-    context 'ブロックを渡せば' do
-      subject(:request_list){ service.__send__(:request_list, :method, 'path', nil, /\d/m){ |m| 'b'+m } }
+    context 'に"id, { logging: true }"を渡した場合' do
+      let(:service){ ImasCG::Service.new 'id', logging: true }
 
-      it '#requestの戻り値をブロックを使用して配列に変換する' do
-        expect( request_list ).to eql %w{b0 b1 b2 b3 b4 b5 b6 b7 b8 b9}
+      describe '#sid' do
+        subject{ service.sid }
+
+        it 'は"id"である' do
+          expect( subject ).to eql 'id'
+        end
+      end
+
+      it 'はログ出力を行う' do
+        expect( handlers ).to include Faraday::Response::Logger
       end
     end
   end
 
-  context 'で#get_wishlistする場合' do
-    before do
-      service.should_receive(:request).with(:get, 'wish/index', nil).and_return(html 'get_wishlist.html')
+  describe '#request_list' do
+    context 'にブロックを渡さない場合' do
+      subject{ service.__send__(:request_list, :method, 'path', nil, /\d/m) }
+
+      it 'は#requestを呼び出し、戻り値を配列に変換する' do
+        expect( service ).to receive(:request).with(:method, 'path', nil).and_return('0123456789')
+        expect( subject ).to eql %w{0 1 2 3 4 5 6 7 8 9}
+      end
     end
 
-    subject(:get_wishlist){ service.get_wishlist }
+    context 'にブロックを渡した場合' do
+      subject{ service.__send__(:request_list, :method, 'path', nil, /\d/m){ |m| 'b'+m } }
 
-    it '#requestを"wish/index"で呼び出し、戻り値を配列に変換する' do
-      expect( get_wishlist ).to eql [
+      it 'は#requestを呼び出し、戻り値をブロックを使用して配列に変換する' do
+        expect( service ).to receive(:request).with(:method, 'path', nil).and_return('0123456789')
+        expect( subject ).to eql %w{b0 b1 b2 b3 b4 b5 b6 b7 b8 b9}
+      end
+    end
+  end
+
+  describe '#get_wishlist' do
+    subject{ service.get_wishlist }
+
+    it 'は#requestを"wish/index"で呼び出し、戻り値を配列に変換する' do
+      expect( service ).to receive(:request).with(:get, 'wish/index', nil).and_return(html 'get_wishlist.html')
+      expect( subject ).to eql [
         {hash: 'ae3ba85f888597f52c2744eeac3d9ace', id: '3402901', name: '[ｻﾝﾌﾗﾜｰｲｴﾛｰ]龍崎薫'},
         {hash: '94f468204a314b13c221bc2ff351a15a', id: '3410001', name: '[ちびっこﾎﾟﾘｽ]龍崎薫'},
       ]
     end
   end
 
-  context 'で#regist_wishlistする場合' do
-    it 'は#requestを"wish/regist/[hash]/0"で呼び出す' do
-      service.should_receive(:request).with(:head, 'wish/regist/100/0', nil).and_return(nil)
-      expect( service.regist_wishlist(100) ).to eql nil
+  describe '#regist_wishlist' do
+    subject{ service.regist_wishlist(100) }
+
+    it 'は#headを"wish/regist/[hash]/0"で呼び出す' do
+      expect( service ).to receive(:head).with('wish/regist/100/0')
+      subject
     end
   end
 
-  context 'で#remove_wishlistする場合' do
-    it 'は#requestを"wish/removes/0/[id]"で呼び出す' do
-      service.should_receive(:request).with(:head, 'wish/removes/0/100', nil).and_return(nil)
-      expect( service.remove_wishlist(100) ).to eql nil
+  describe '#remove_wishlist' do
+    subject{ service.remove_wishlist(100) }
+
+    it 'は#headを"wish/removes/0/[id]"で呼び出す' do
+      expect( service ).to receive(:head).with('wish/removes/0/100')
+      subject
     end
   end
 
-  context 'で#get_gallaryする場合' do
-    it 'は#requestを"gallery"で呼び出す' do
-      service.should_receive(:request).with(:post, 'gallery', keyword: 'Key').and_return('')
-      expect( service.get_gallary('Key') ).to eql []
+  describe '#get_gallary' do
+    context 'に何も渡さなかった場合' do
+      subject{ service.get_gallary() }
+
+      it 'は#requestを"gallery, keyword: nil"で呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'gallery', keyword: nil).and_return('')
+        subject
+      end
     end
 
-    it 'は#requestを"gallery"で呼び出す' do
-      service.should_receive(:request).with(:post, 'gallery', keyword: nil).and_return('')
-      expect( service.get_gallary() ).to eql []
+    context 'に"Key"を渡した場合' do
+      subject{ service.get_gallary('Key') }
+
+      it 'は#requestを"gallery, keyword: Key"で呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'gallery', keyword: 'Key').and_return('')
+        subject
+      end
     end
+
+    subject{ service.get_gallary('ざき') }
 
     it 'は#requestの戻り値を配列に変換する' do
-      service.should_receive(:request).with(:post, 'gallery', keyword: 'ざき').and_return(html 'gallery_zaki.html')
-      expect( service.get_gallary('ざき') ).to eql [
+      expect( service ).to receive(:request).with(:post, 'gallery', keyword: 'ざき').and_return(html 'gallery_zaki.html')
+      expect( subject ).to eql [
         {name: '神崎蘭子', index: 95},
         {name: '岡崎泰葉', index: 119},
         {name: '龍崎薫', index: 133},
@@ -108,13 +123,17 @@ describe ImasCG::Service do
     end
   end
 
-  context 'で#get_gallary_descriptionする場合' do
-    before do
-      service.should_receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
+  describe '#get_gallary_description' do
+    subject{ service.get_gallary_description(133) }
+
+    it 'は#requestを"gallery/desc/[index]"で呼び出す' do
+      expect( service ).to receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
+      subject
     end
 
-    it 'は#requestを"gallery/desc/[index]"で呼び出し、戻り値をハッシュの配列に変換する' do
-      expect( service.get_gallary_description(133).first ).to eql ({
+    it 'は#requestの戻り値をハッシュの配列に変換する' do
+      expect( service ).to receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
+      expect( subject.first ).to eql ({
         name: '龍崎薫',
         hash: '6bd01496d9b00da9563c7e92b6a40257',
         kana: 'りゅうざきかおる',
@@ -134,7 +153,8 @@ describe ImasCG::Service do
     end
 
     it 'は#requestの戻り値をページをまたいでもハッシュの配列に変換する' do
-      expect( service.get_gallary_description(133).map{ |id| id[:name] } ).to eql [
+      expect( service ).to receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
+      expect( subject.map{ |id| id[:name] } ).to eql [
         '龍崎薫',
         '龍崎薫+',
         '[新春]龍崎薫',
@@ -153,13 +173,17 @@ describe ImasCG::Service do
     end
   end
 
-  context 'で#get_statusする場合' do
-    before do
-      service.should_receive(:request).with(:get, 'mypage').and_return(html 'mypage.html')
+  describe '#get_status' do
+    subject{ service.get_status }
+    
+    it 'は#requestを"mypage"で呼び出す' do
+      expect( service ).to receive(:request).with(:get, 'mypage').and_return('')
+      subject
     end
 
-    it 'は#requestを"mypage"で呼び出し、戻り値をハッシュに変換する' do
-      expect( service.get_status ).to eql ({
+    it 'は#requestの戻り値をハッシュに変換する' do
+      expect( service ).to receive(:request).with(:get, 'mypage').and_return(html 'mypage.html')
+      expect( subject ).to eql ({
         stamina: 37,
         stamina_max: 300,
         offence: 3,
