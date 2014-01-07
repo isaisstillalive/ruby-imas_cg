@@ -3,6 +3,8 @@
 module ImasCG
     require 'faraday'
     require 'JSON'
+    
+    require_relative 'wishlist'
 
     class Service
         def initialize sid, options = {}
