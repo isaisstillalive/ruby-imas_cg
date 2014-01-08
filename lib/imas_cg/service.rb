@@ -73,7 +73,7 @@ module ImasCG
         end
 
         def get_status
-            source = request :get, 'mypage'
+            source = get 'mypage'
             return nil if source.empty?
 
             match = /<div class="value">スタミナ　(?<stamina>\d*) \/ (?<stamina_max>\d*)<\/div>.*?<div class="value">攻コスト　(?<offence>\d*) \/ (?<offence_max>\d*)<\/div>.*?<li class="type01">マニー：(?<money>[\d,]*)<\/li>.*?<li class="type02">守コスト：(?<diffence>\d*) \/ (?<diffence_max>\d*)<\/li>.*?<li class="type03">ファン：(?<fan>\d*)<\/li>/m.match(source)
@@ -94,6 +94,10 @@ module ImasCG
         def request method, url, params = nil
             source = @conn.__send__ method, url, params
             source.body
+        end
+
+        def get url, params = nil
+            request :get, url, params
         end
 
         def head url, params = nil

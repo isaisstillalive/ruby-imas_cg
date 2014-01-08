@@ -174,13 +174,13 @@ describe ImasCG::Service do
   describe '#get_status' do
     subject{ service.get_status }
     
-    it 'は#requestを"mypage"で呼び出す' do
-      expect( service ).to receive(:request).with(:get, 'mypage').and_return('')
+    it 'は　#get("mypage") を呼び出す' do
+      expect( service ).to receive(:get).with('mypage').and_return('')
       subject
     end
 
-    it 'は#requestの戻り値をハッシュに変換する' do
-      expect( service ).to receive(:request).with(:get, 'mypage').and_return(html 'mypage.html')
+    it 'は戻り値をハッシュに変換する' do
+      expect( service ).to receive(:get).with('mypage').and_return(html 'mypage.html')
       expect( subject ).to eql ({
         stamina: 37,
         stamina_max: 300,
