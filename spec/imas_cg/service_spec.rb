@@ -43,7 +43,12 @@ describe ImasCG::Service do
     context 'にブロックを渡さない場合' do
       subject{ service.__send__(:request_list, :method, 'path', nil, /\d/m) }
 
-      it 'は#requestを呼び出し、戻り値を配列に変換する' do
+      it 'は #request(:method, "path", nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:method, 'path', nil).and_return('0123456789')
+        subject
+      end
+
+      it 'は戻り値を配列に変換する' do
         expect( service ).to receive(:request).with(:method, 'path', nil).and_return('0123456789')
         expect( subject ).to eql %w{0 1 2 3 4 5 6 7 8 9}
       end
@@ -52,7 +57,12 @@ describe ImasCG::Service do
     context 'にブロックを渡した場合' do
       subject{ service.__send__(:request_list, :method, 'path', nil, /\d/m){ |m| 'b'+m } }
 
-      it 'は#requestを呼び出し、戻り値をブロックを使用して配列に変換する' do
+      it 'は #request(:method, "path", nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:method, 'path', nil).and_return('0123456789')
+        subject
+      end
+
+      it 'は戻り値をブロックを使用して配列に変換する' do
         expect( service ).to receive(:request).with(:method, 'path', nil).and_return('0123456789')
         expect( subject ).to eql %w{b0 b1 b2 b3 b4 b5 b6 b7 b8 b9}
       end
@@ -62,7 +72,12 @@ describe ImasCG::Service do
   describe '#get_wishlist' do
     subject{ service.get_wishlist }
 
-    it 'は#requestを"wish/index"で呼び出し、戻り値を配列に変換する' do
+    it 'は　#request("wish/index") を呼び出す' do
+      expect( service ).to receive(:request).with(:get, 'wish/index', nil).and_return('')
+      subject
+    end
+
+    it 'は戻り値を配列に変換する' do
       expect( service ).to receive(:request).with(:get, 'wish/index', nil).and_return(html 'get_wishlist.html')
       expect( subject ).to eql [
         {hash: 'ae3ba85f888597f52c2744eeac3d9ace', id: '3402901', name: '[ｻﾝﾌﾗﾜｰｲｴﾛｰ]龍崎薫'},
@@ -74,7 +89,7 @@ describe ImasCG::Service do
   describe '#regist_wishlist' do
     subject{ service.regist_wishlist(100) }
 
-    it 'は#headを"wish/regist/[hash]/0"で呼び出す' do
+    it 'は #head("wish/regist/[hash]/0") を呼び出す' do
       expect( service ).to receive(:head).with('wish/regist/100/0')
       subject
     end
@@ -83,7 +98,7 @@ describe ImasCG::Service do
   describe '#remove_wishlist' do
     subject{ service.remove_wishlist(100) }
 
-    it 'は#headを"wish/removes/0/[id]"で呼び出す' do
+    it 'は　#head("wish/removes/0/[id]") を呼び出す' do
       expect( service ).to receive(:head).with('wish/removes/0/100')
       subject
     end
@@ -93,7 +108,7 @@ describe ImasCG::Service do
     context 'に何も渡さなかった場合' do
       subject{ service.get_gallary() }
 
-      it 'は#requestを"gallery, keyword: nil"で呼び出す' do
+      it 'は　#request(:post, "gallery", keyword: nil) を呼び出す' do
         expect( service ).to receive(:request).with(:post, 'gallery', keyword: nil).and_return('')
         subject
       end
@@ -102,7 +117,7 @@ describe ImasCG::Service do
     context 'に"Key"を渡した場合' do
       subject{ service.get_gallary('Key') }
 
-      it 'は#requestを"gallery, keyword: Key"で呼び出す' do
+      it 'は #request(:post, "gallery", keyword: Key) を呼び出す' do
         expect( service ).to receive(:request).with(:post, 'gallery', keyword: 'Key').and_return('')
         subject
       end
@@ -110,7 +125,7 @@ describe ImasCG::Service do
 
     subject{ service.get_gallary('ざき') }
 
-    it 'は#requestの戻り値を配列に変換する' do
+    it 'は戻り値を配列に変換する' do
       expect( service ).to receive(:request).with(:post, 'gallery', keyword: 'ざき').and_return(html 'gallery_zaki.html')
       expect( subject ).to eql [
         {name: '神崎蘭子', index: 95},
@@ -124,12 +139,12 @@ describe ImasCG::Service do
   describe '#get_gallary_description' do
     subject{ service.get_gallary_description(133) }
 
-    it 'は#requestを"gallery/desc/[index]"で呼び出す' do
+    it 'は #request(:get, "gallery/desc/[index]", nil) を呼び出す' do
       expect( service ).to receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
       subject
     end
 
-    it 'は#requestの戻り値をハッシュの配列に変換する' do
+    it 'は戻り値をハッシュの配列に変換する' do
       expect( service ).to receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
       expect( subject.first ).to eql ({
         name: '龍崎薫',
@@ -150,7 +165,7 @@ describe ImasCG::Service do
       })
     end
 
-    it 'は#requestの戻り値をページをまたいでもハッシュの配列に変換する' do
+    it 'は戻り値をページをまたいでもハッシュの配列に変換する' do
       expect( service ).to receive(:request).with(:get, 'gallery/desc/133', nil).and_return(html 'gallery_desc_kaoru.html')
       expect( subject.map{ |id| id[:name] } ).to eql [
         '龍崎薫',
