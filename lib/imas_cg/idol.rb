@@ -2,7 +2,7 @@
 
 module ImasCG
     class Idol
-        attr_reader :id, :digest
+        attr_reader :id, :digest, :name
 
         def initialize data
             case data
@@ -16,6 +16,8 @@ module ImasCG
 
             @id = data[:id]
             @digest = data[:digest]
+
+            @name = data[:name]
         end
     end
 end
