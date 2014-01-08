@@ -3,14 +3,14 @@
 require_relative '../spec_helper.rb'
 
 describe ImasCG::Wishlist do
-  let(:service){ double('ImasCG::Service') }
-  let(:wishlist){ described_class.new service }
-
   it 'はEnumerableをincludeしている' do
     expect( described_class ).to include Enumerable
   end
 
   context 'を<service>で初期化した場合' do
+    let(:service){ double('ImasCG::Service') }
+    let(:wishlist){ described_class.new service }
+
     describe '@service' do
       subject{ wishlist.instance_variable_get(:@service) }
 
@@ -18,32 +18,32 @@ describe ImasCG::Wishlist do
         expect( subject ).to equal service
       end
     end
-  end
 
-  describe '#each' do
-    subject{ wishlist.each{} }
+    describe '#each' do
+      subject{ wishlist.each{} }
 
-    it 'は@service#get_wishlistを実行する' do
-      expect( service ).to receive(:get_wishlist).and_return([])
-      subject
+      it 'は<service>#get_wishlistを実行する' do
+        expect( service ).to receive(:get_wishlist).and_return([])
+        subject
+      end
     end
-  end
 
-  describe '#<<' do
-    subject{ wishlist << 123 }
+    describe '#<<' do
+      subject{ wishlist << 123 }
 
-    it 'は@service#regist_wishlistを実行する' do
-      expect( service ).to receive(:regist_wishlist).with(123)
-      subject
+      it 'は<service>#regist_wishlistを実行する' do
+        expect( service ).to receive(:regist_wishlist).with(123)
+        subject
+      end
     end
-  end
 
-  context '#delete' do
-    subject{ wishlist.delete(123) }
+    context '#delete' do
+      subject{ wishlist.delete(123) }
 
-    it 'は@service#removes_wishlistを実行する' do
-      expect(service).to receive(:removes_wishlist).with(123)
-      subject
+      it 'は<service>#removes_wishlistを実行する' do
+        expect(service).to receive(:removes_wishlist).with(123)
+        subject
+      end
     end
   end
 end
