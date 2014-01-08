@@ -21,22 +21,23 @@ describe ImasCG::Wishlist do
 
     describe '#each' do
       context 'にブロックを渡した場合' do
-        subject do
-          [].tap do |result|
-            wishlist.each{ |value| result << value }
-          end
+        subject{ wishlist.each{} }
+
+        it 'は <service>#get_wishlist を実行する' do
+          expect( service ).to receive(:get_wishlist).and_return([1,2,3])
+          subject
         end
 
-        it 'は<service>#get_wishlistを実行する' do
+        it 'は戻り値を順に yield する' do
           expect( service ).to receive(:get_wishlist).and_return([1,2,3])
-          expect( subject ).to eql [1,2,3]
+          expect{ |b| wishlist.each(&b) }.to yield_successive_args(1,2,3)
         end
       end
 
       context 'にブロックを渡さない場合' do
         subject{ wishlist.each }
 
-        it 'は<service>#get_wishlistを実行しない' do
+        it 'は <service>#get_wishlist を実行しない' do
           expect( service ).not_to receive(:get_wishlist)
           subject
         end
@@ -49,7 +50,7 @@ describe ImasCG::Wishlist do
       context 'の戻り値のEnumeratorを実行した場合' do
         subject{ wishlist.each.to_a }
 
-        it 'は<service>#get_wishlistを実行する' do
+        it 'は <service>#get_wishlist を実行する' do
           expect( service ).to receive(:get_wishlist).and_return([1,2,3])
           expect( subject ).to eql [1,2,3]
         end
