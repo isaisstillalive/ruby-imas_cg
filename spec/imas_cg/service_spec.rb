@@ -3,14 +3,12 @@
 require_relative '../spec_helper.rb'
 
 describe ImasCG::Service do
-  let(:service){ ImasCG::Service.new 'id' }
+  let(:service){ described_class.new 'id' }
   let(:conn){ service.instance_variable_get(:@conn) }
   let(:handlers){ conn.builder.handlers }
 
   context 'を初期化する場合' do
-    context 'に"id"を渡した場合' do
-      let(:service){ ImasCG::Service.new 'id' }
-
+    shared_examples_for '"id"を保持' do
       describe '#sid' do
         subject{ service.sid }
 
@@ -18,6 +16,12 @@ describe ImasCG::Service do
           expect( subject ).to eql 'id'
         end
       end
+    end
+
+    context 'に"id"を渡した場合' do
+      let(:service){ described_class.new 'id' }
+
+      it_behaves_like '"id"を保持'
 
       it 'はログ出力を行わない' do
         expect( handlers ).not_to include Faraday::Response::Logger
@@ -25,15 +29,9 @@ describe ImasCG::Service do
     end
 
     context 'に"id, { logging: true }"を渡した場合' do
-      let(:service){ ImasCG::Service.new 'id', logging: true }
+      let(:service){ described_class.new 'id', logging: true }
 
-      describe '#sid' do
-        subject{ service.sid }
-
-        it 'は"id"である' do
-          expect( subject ).to eql 'id'
-        end
-      end
+      it_behaves_like '"id"を保持'
 
       it 'はログ出力を行う' do
         expect( handlers ).to include Faraday::Response::Logger
