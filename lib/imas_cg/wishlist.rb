@@ -9,17 +9,29 @@ module ImasCG
 		end
 
 		def each
+			return enum_for :each unless block_given?
+
 			@service.get_wishlist.each do |idol|
 				yield idol
 			end
 		end
 
-		def << digest
-			@service.regist_wishlist digest
+		def << idol
+			if idol.instance_of? Idol
+				idol = idol.digest
+				raise if idol.nil?
+			end
+
+			@service.regist_wishlist idol
 		end
 
-		def delete id
-			@service.removes_wishlist id
+		def delete idol
+			if idol.instance_of? Idol
+				idol = idol.id
+				raise if idol.nil?
+			end
+
+			@service.removes_wishlist idol
 		end
 	end
 end
