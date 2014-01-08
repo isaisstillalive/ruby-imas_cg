@@ -3,16 +3,24 @@
 require_relative 'spec_helper.rb'
 
 describe ImasCG do
-  context 'の#[]を実行する場合' do
-    it 'はImasCG::Service.newを実行する' do
-      ImasCG::Service.should_receive(:new).with('id', {}).and_return('')
-      ImasCG['id'].should eql ''
+  describe '#[]' do
+    context 'に "id" を渡した場合' do
+      subject{ described_class['id'] }
+
+      it 'は ImasCG::Service.new "id" を実行する' do
+        expect( ImasCG::Service ).to receive(:new).with('id', {}).and_return('')
+        expect( subject ).to eql ''
+      end
     end
 
-    it 'はImasCG::Service.newを実行する' do
-      options = {test: 'value'}
-      ImasCG::Service.should_receive(:new).with('id', options).and_return('')
-      ImasCG['id', options].should eql ''
+    context 'に "id", options を渡した場合' do
+      let(:options) { {test: 'value'} }
+      subject{ described_class['id', options] }
+
+      it 'は ImasCG::Service.new "id", options を実行する' do
+        expect( ImasCG::Service ).to receive(:new).with('id', options).and_return('')
+        expect( subject ).to eql ''
+      end
     end
   end
 end
