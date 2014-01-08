@@ -39,6 +39,29 @@ describe ImasCG::Service do
     end
   end
 
+  describe '#request' do
+    subject{ service.__send__(:request, :get, 'path') }
+
+    it 'は @conn#method を呼び出す' do
+      expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 200))
+      subject
+    end
+
+    context 'サーバがメンテ中はない場合' do
+      it 'は戻り値のレスポンスボディを返却する' do
+        expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 200))
+        expect( subject ).to eql '0123456789'
+      end
+    end
+
+    context 'サーバがメンテ中の場合' do
+      it 'は例外を発生させる' do
+        expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 302))
+        expect{ subject }.to raise_error Exception::Maintenance
+      end
+    end
+  end
+
   describe '#request_list' do
     context 'にブロックを渡さない場合' do
       subject{ service.__send__(:request_list, :method, 'path', nil, /\d/m) }

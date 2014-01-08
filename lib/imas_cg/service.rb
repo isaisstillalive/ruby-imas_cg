@@ -5,6 +5,7 @@ module ImasCG
     require 'JSON'
     
     require_relative 'wishlist'
+    require_relative 'exception/maintenance'
 
     class Service
         def initialize sid, options = {}
@@ -93,6 +94,7 @@ module ImasCG
 
         def request method, url, params = nil
             source = @conn.__send__ method, url, params
+            raise Exception::Maintenance.new if source.status == 302 # メンテ中
             source.body
         end
 
