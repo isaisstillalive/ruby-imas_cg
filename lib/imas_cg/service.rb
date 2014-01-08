@@ -76,20 +76,16 @@ module ImasCG
             source = request :get, 'mypage'
             return nil if source.empty?
 
-            stamina = /<div class="value">スタミナ　(\d*) \/ (\d*)<\/div>/.match(source)
-            offence = /<div class="value">攻コスト　(\d*) \/ (\d*)<\/div>/.match(source)
-            money = /<li class="type01">マニー：([\d,]*)<\/li>/.match(source)
-            diffence = /<li class="type02">守コスト：(\d*) \/ (\d*)<\/li>/.match(source)
-            fan = /<li class="type03">ファン：(\d*)<\/li>/.match(source)
+            match = /<div class="value">スタミナ　(?<stamina>\d*) \/ (?<stamina_max>\d*)<\/div>.*?<div class="value">攻コスト　(?<offence>\d*) \/ (?<offence_max>\d*)<\/div>.*?<li class="type01">マニー：(?<money>[\d,]*)<\/li>.*?<li class="type02">守コスト：(?<diffence>\d*) \/ (?<diffence_max>\d*)<\/li>.*?<li class="type03">ファン：(?<fan>\d*)<\/li>/m.match(source)
             {
-                stamina: stamina[1].to_i,
-                stamina_max: stamina[2].to_i,
-                offence: offence[1].to_i,
-                offence_max: offence[2].to_i,
-                diffence: diffence[1].to_i,
-                diffence_max: diffence[2].to_i,
-                money: money[1].gsub(',', '').to_i,
-                fan: fan[1].to_i,
+                stamina: match[:stamina].to_i,
+                stamina_max: match[:stamina_max].to_i,
+                offence: match[:offence].to_i,
+                offence_max: match[:offence_max].to_i,
+                diffence: match[:diffence].to_i,
+                diffence_max: match[:diffence_max].to_i,
+                money: match[:money].gsub(',', '').to_i,
+                fan: match[:fan].to_i,
             }
         end
 
