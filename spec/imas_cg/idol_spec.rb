@@ -33,6 +33,42 @@ describe ImasCG::Idol do
     end
 
     it_behaves_like '空'
+
+    describe '#==' do
+      subject{ idol == idol_other }
+
+      context 'Idol以外を渡した場合' do
+        let(:idol_other){ 1 }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context '同じidを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000401 }
+
+        it 'の結果はtrue' do
+          expect( subject ).to eql true
+        end
+      end
+
+      context '異なるidを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000400 }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context 'idを持たないIdolを渡した場合' do
+        let(:idol_other){ described_class.new digest: '6bd01496d9b00da9563c7e92b6a40257' }
+
+        it 'の結果はnil' do
+          expect( subject ).to eql nil
+        end
+      end
+    end
   end
 
   context 'を文字列（digest）で初期化した場合' do
@@ -55,6 +91,42 @@ describe ImasCG::Idol do
     end
 
     it_behaves_like '空'
+
+    describe '#==' do
+      subject{ idol == idol_other }
+
+      context 'Idol以外を渡した場合' do
+        let(:idol_other){ 1 }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context '同じdigestを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new digest: '6bd01496d9b00da9563c7e92b6a40257' }
+
+        it 'の結果はtrue' do
+          expect( subject ).to eql true
+        end
+      end
+
+      context '異なるdigestを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new digest: '00000000000000000000000000000000' }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context 'digestを持たないIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000400 }
+
+        it 'の結果はnil' do
+          expect( subject ).to eql nil
+        end
+      end
+    end
   end
 
   context 'をHash（データ）で初期化した場合' do
@@ -87,6 +159,66 @@ describe ImasCG::Idol do
 
       it 'はHash[:name]である' do
         expect( subject ).to eql '龍崎薫'
+      end
+    end
+
+    describe '#==' do
+      subject{ idol == idol_other }
+
+      context 'Idol以外を渡した場合' do
+        let(:idol_other){ 1 }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context '同じidを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000401 }
+
+        it 'の結果はtrue' do
+          expect( subject ).to eql true
+        end
+      end
+
+      context '異なるidを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000400 }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context '同じdigestを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new digest: '6bd01496d9b00da9563c7e92b6a40257' }
+
+        it 'の結果はtrue' do
+          expect( subject ).to eql true
+        end
+      end
+
+      context '異なるdigestを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new digest: '00000000000000000000000000000000' }
+
+        it 'の結果はfalse' do
+          expect( subject ).to eql false
+        end
+      end
+
+      context '同じidと異なるdigestを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000401, digest: '00000000000000000000000000000000' }
+
+        it 'の結果はnil' # do
+        #   expect( subject ).to eql nil
+        # end
+      end
+
+      context '異なるidと同じdigestを持ったIdolを渡した場合' do
+        let(:idol_other){ described_class.new id: 3000400, digest: '6bd01496d9b00da9563c7e92b6a40257' }
+
+        it 'の結果はnil' # do
+        #   expect( subject ).to eql nil
+        # end
       end
     end
   end
