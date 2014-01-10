@@ -208,17 +208,17 @@ describe ImasCG::Idol do
       context '同じidと異なるdigestを持ったIdolを渡した場合' do
         let(:idol_other){ described_class.new id: 3000401, digest: '00000000000000000000000000000000' }
 
-        it 'の結果はnil' # do
-        #   expect( subject ).to eql nil
-        # end
+        it 'の結果はnil' do
+          expect( subject ).to eql nil
+        end
       end
 
       context '異なるidと同じdigestを持ったIdolを渡した場合' do
         let(:idol_other){ described_class.new id: 3000400, digest: '6bd01496d9b00da9563c7e92b6a40257' }
 
-        it 'の結果はnil' # do
-        #   expect( subject ).to eql nil
-        # end
+        it 'の結果はnil' do
+          expect( subject ).to eql nil
+        end
       end
     end
   end
