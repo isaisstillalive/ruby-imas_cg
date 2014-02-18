@@ -94,7 +94,7 @@ module ImasCG
 
         def request method, url, params = nil
             source = @conn.__send__ method, url, params
-            raise Exception::Maintenance.new if source.status == 302 # メンテ中
+            raise Exception::Maintenance.new if source.status == 302 && source.headers[:location].match(/%2Fidolmaster%2Fapp_manage%2Fmaintenance/)
             source.body
         end
 

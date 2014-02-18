@@ -47,7 +47,7 @@ describe ImasCG::Service do
       subject
     end
 
-    context 'サーバがメンテ中はない場合' do
+    context 'サーバがメンテ中ではない場合' do
       it 'は戻り値のレスポンスボディを返却する' do
         expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 200))
         expect( subject ).to eql '0123456789'
@@ -56,8 +56,15 @@ describe ImasCG::Service do
 
     context 'サーバがメンテ中の場合' do
       it 'は例外を発生させる' do
-        expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 302))
+        expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 302, headers: { location:'http://sp.pf.mbga.jp/12008305/?guid=ON&url=http%3A%2F%2F125.6.169.35%2Fidolmaster%2Fapp_manage%2Fmaintenance%3Fl_frm%3DBirthday_1%26rnd%3D704872398'} ))
         expect{ subject }.to raise_error Exception::Maintenance
+      end
+    end
+
+    context 'サーバがメンテ中以外のリダイレクトの場合' do
+      it 'は例外を発生させない' do
+        expect( conn ).to receive(:get).with('path', nil).and_return(double('Faraday::Response', body: '0123456789', status: 302, headers: { location:'http://sp.pf.mbga.jp/12008305/?guid=ON&url=http%3A%2F%2F125.6.169.35%2Fidolmaster%2F'} ))
+        expect{ subject }.not_to raise_error
       end
     end
   end
