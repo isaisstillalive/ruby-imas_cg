@@ -11,9 +11,9 @@ module ImasCG
         def initialize sid, options = {}
             ObjectSpace.define_finalizer(self, proc{ self.finalize })
 
-            @conn = Faraday::Connection.new(url: 'http://sp.pf.mbga.jp', request: { app: 12008305 }) do |conn|
+            @conn = Faraday::Connection.new(url: 'http://sp.pf.mbga.jp') do |conn|
                 conn.use Faraday::Request::UrlEncoded
-                conn.use Request::Mobage
+                conn.use Request::Mobage, app: 12008305
                 conn.use Faraday::Response::Logger if options[:logging]
                 conn.use Faraday::Adapter::NetHttp
             end
@@ -25,7 +25,7 @@ module ImasCG
 
         def sid= value
             @sid = value
-            @conn.options[:sid] = value
+            @conn.headers[:sid] = value
         end
 
         def == other
@@ -123,11 +123,16 @@ module ImasCG
 
     module Request
         class Mobage < Faraday::Middleware
+            def initialize app, options
+                super app
+                @mbga_app = options[:app]
+            end
+
             def call env
-                env[:request_headers]['User-Agent'] = 'Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ (KHTML, like Gecko) Safari/999.9'
-                env[:request_headers]['Cookie'] = "sp_mbga_sid_#{env[:request][:app]}=#{env[:request][:sid]}"
-                path = URI.encode_www_form_component('http://125.6.169.35/idolmaster/' + env[:url].path)
-                env[:url] += "/#{env[:request][:app]}/?guid=ON&url=#{path}"
+                env.request_headers['User-Agent'] = 'Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ (KHTML, like Gecko) Safari/999.9'
+                env.request_headers['Cookie'] = "sp_mbga_sid_#{@mbga_app}=#{env.request_headers[:sid]}"
+                path = URI.encode_www_form_component('http://125.6.169.35/idolmaster/' + env.url.path)
+                env.url += "/#{@mbga_app}/?guid=ON&url=#{path}"
                 @app.call env
             end
         end
