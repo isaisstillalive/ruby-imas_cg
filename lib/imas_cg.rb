@@ -4,9 +4,9 @@ require_relative 'imas_cg/service'
 require_relative 'imas_cg/idol'
 
 module ImasCG
-    class << self
-        def [] sid, options = {}
-            Service.new sid, options
-        end
+  class << self
+    def [] sid, options = {}
+      Service.new sid, options
     end
+  end
 end

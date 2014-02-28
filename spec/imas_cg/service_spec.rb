@@ -218,7 +218,7 @@ describe ImasCG::Service do
 
   describe '#get_status' do
     subject{ service.get_status }
-    
+
     it 'は　#get("mypage") を呼び出す' do
       expect( service ).to receive(:get).with('mypage').and_return('')
       subject

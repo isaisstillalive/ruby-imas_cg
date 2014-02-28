@@ -9,5 +9,5 @@ RSpec.configure do |config|
 end
 
 def html path
-	File.read("#{File.dirname(__FILE__)}/html/#{path}", encoding: Encoding::UTF_8)
+  File.read("#{File.dirname(__FILE__)}/html/#{path}", encoding: Encoding::UTF_8)
 end
