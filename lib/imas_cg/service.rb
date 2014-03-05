@@ -129,10 +129,10 @@ module ImasCG
       end
 
       def call env
-        env.request_headers['User-Agent'] = 'Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ (KHTML, like Gecko) Safari/999.9'
-        env.request_headers['Cookie'] = "sp_mbga_sid_#{@mbga_app}=#{env.request_headers[:sid]}"
-        path = URI.encode_www_form_component('http://125.6.169.35/idolmaster/' + env.url.path)
-        env.url += "/#{@mbga_app}/?guid=ON&url=#{path}"
+        env[:request_headers]['User-Agent'] = 'Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ (KHTML, like Gecko) Safari/999.9'
+        env[:request_headers]['Cookie'] = "sp_mbga_sid_#{@mbga_app}=#{env[:request_headers]['Sid']}"
+        path = URI.encode_www_form_component('http://125.6.169.35/idolmaster/' + env[:url].path)
+        env[:url] += "/#{@mbga_app}/?guid=ON&url=#{path}"
         @app.call env
       end
     end
