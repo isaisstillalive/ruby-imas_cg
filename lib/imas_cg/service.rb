@@ -62,7 +62,7 @@ module ImasCG
     end
 
     def get_gallary_description index
-      request_list :get, "gallery/desc/#{index}", nil, /<div class="idol" >.*?style="background: url\(http:\/\/125\.6\.169\.35\/idolmaster\/image_sp\/card\/xs\/(?<hash>[0-9a-f]{32})\.jpg\?v=[^\)]*\) no-repeat; background-size: 70px 70px;".*?<input type="hidden" name="basedata" data-name="(?<name>[^"]*)" data-rarity="(?<rare>[^"]*)" data-attribute="(?<attribute>[^"]*)">.*?data-profile='(?<profile>[^']*)'>/m do |matched|
+      request_list :get, "gallery/desc/#{index}", nil, /<div class="idol"[^>]*>.*?style="background:\s*url\(http:\/\/sp\.pf-img-a\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fimage_sp%2Fcard%2Fxs%2F(?<hash>[0-9a-f]{32})\.jpg%3Fv%3D[^\)]*\) no-repeat;.*?<input type="hidden" name="basedata" data-name="(?<name>[^"]*)" data-rarity="(?<rare>[^"]*)" data-attribute="(?<attribute>[^"]*)">.*?data-profile='(?<profile>[^']*)'>/m do |matched|
         hash, name, rare, attribute, profile = *matched
         JSON.parse(URI.decode_www_form_component(profile), symbolize_names: true).tap do |profile|
           profile[:hash] = hash
