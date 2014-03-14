@@ -52,7 +52,7 @@ module ImasCG
     end
 
     def get_gallary keyword = nil
-      request_list :post, 'gallery', { keyword: keyword }, /<a href='http:\/\/sp\.pf\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'>.*?<div class="idol" style="background: url\(http:\/\/125\.6\.169\.35\/idolmaster\/image_sp\/card\/quest\/(?<hash>[0-9a-f]{32})\.png\?v=\d+\) -22px -26px no-repeat; background-size: 180px 188px;"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
+      request_list :post, 'gallery', { keyword: keyword }, /<a href='http:\/\/sp\.pf\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'>.*?<div class="idol" style="background: url\(http:\/\/125\.6\.169\.35\/idolmaster\/image_sp\/card\/quest\/(?<hash>[0-9a-f]{32})\.png\?v=\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
         index, hash, name = *matched
         {
           index: index.to_i,
