@@ -33,7 +33,7 @@ module ImasCG
     end
 
     def get_wishlist
-      request_list :get, 'wish/index', nil, /<table width="100%" align="center">.*?card%2Fs%2F(?<hash>[0-9a-f]{32})\.jpg" width="90">.*?<td align="center">\s*(?<name>[^<]*)<br \/>.*?http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fwish%2Fremoves%2F0%2F(?<id>\d*)%3Fl_frm%3DWish_1%26rnd%3D\d*'>/m do |matched|
+      request_list :get, 'wish/index', nil, /<table width="100%" align="center" class="m-Btm10">.*?card%2Fs%2F(?<hash>[0-9a-f]{32})\.jpg" width="90">.*?<td align="center">\s*<div class="m-Btm10">(?<name>[^<]*)<\/div>.*?http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fwish%2Fremoves%2F0%2F(?<id>\d*)%3Fl_frm%3DWish_1%26rnd%3D\d*'>/m do |matched|
         hash, name, id = *matched
         {
           id: id,
