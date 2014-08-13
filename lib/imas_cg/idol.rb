@@ -23,25 +23,24 @@ module ImasCG
     def == other
       return false unless other.instance_of? Idol
 
-      id_nil   = (@id.nil? || other.id.nil?)
-      digest_nil = (@digest.nil? || other.digest.nil?)
+      is_id_comparable     = !(@id.nil? || other.id.nil?)
+      is_digest_comparable = !(@digest.nil? || other.digest.nil?)
 
-      # 両方nilなら比較できないのでnilを返す
-      return nil if id_nil && digest_nil
+      # idでもdigestでも比較できなければnilを返す
+      return nil unless is_id_comparable || is_digest_comparable
 
-      check_id   = @id == other.id
+      check_id     = @id == other.id
       check_digest = @digest == other.digest
 
-      # 片方がnilなら反対側の結果を返す
-      if id_nil
+      # idのみならidの比較結果を、digestのみならidの比較結果を返す
+      if !is_id_comparable
         return check_digest
-      elsif digest_nil
+      elsif !is_digest_comparable
         return check_id
       end
 
-      # 片方が一致で片方が不一致の場合、nilを返す
-      # イレギュラーなので例外を発生させた方が良いか？
-      return nil if check_id != check_digest
+      # 片方が一致で片方が不一致の場合、TypeError例外を発生
+      raise TypeError if check_id != check_digest
 
       # 一致してる場合、どちらでも同じなので返す
       return check_id
