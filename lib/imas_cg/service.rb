@@ -51,8 +51,9 @@ module ImasCG
       head "wish/regist/#{hash}/0"
     end
 
-    def get_gallary keyword = nil
-      request_list :post, 'gallery/index/0/1/?history=2&l_frm=Gallery_1', { keyword: keyword }, /<a href='http:\/\/sp\.pf\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'>.*?<div class="idol" style="background: url\(http:\/\/125\.6\.169\.35\/idolmaster\/image_sp\/card\/quest\/(?<hash>[0-9a-f]{32})\.png\?v=\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
+    def get_gallary params = {}
+      type = get_type_id params[:type]
+      request_list :post, "gallery/index/#{type}/1/?history=2&l_frm=Gallery_1", { keyword: params[:keyword] }, /<a href='http:\/\/sp\.pf\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'>.*?<div class="idol" style="background: url\(http:\/\/125\.6\.169\.35\/idolmaster\/image_sp\/card\/quest\/(?<hash>[0-9a-f]{32})\.png\?v=\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
         index, hash, name = *matched
         {
           index: index.to_i,
@@ -118,6 +119,19 @@ module ImasCG
       else
         source.scan pattern
       end
+    end
+
+    def get_type_id type
+      case type
+        when 1, :cute
+          1
+        when 2, :cool
+          2
+        when 3, :passion
+          3
+        else
+          0
+        end
     end
   end
 
