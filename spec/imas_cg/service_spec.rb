@@ -138,8 +138,8 @@ describe ImasCG::Service do
     context 'に何も渡さなかった場合' do
       subject{ service.get_gallary() }
 
-      it 'は　#request(:post, "gallery", keyword: nil) を呼び出す' do
-        expect( service ).to receive(:request).with(:post, 'gallery', keyword: nil).and_return('')
+      it 'は　#request(:post, "gallery/index/0/1/?history=2&l_frm=Gallery_1", keyword: nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'gallery/index/0/1/?history=2&l_frm=Gallery_1', keyword: nil).and_return('')
         subject
       end
     end
@@ -147,8 +147,8 @@ describe ImasCG::Service do
     context 'に"Key"を渡した場合' do
       subject{ service.get_gallary('Key') }
 
-      it 'は #request(:post, "gallery", keyword: Key) を呼び出す' do
-        expect( service ).to receive(:request).with(:post, 'gallery', keyword: 'Key').and_return('')
+      it 'は #request(:post, "gallery/index/0/1/?history=2&l_frm=Gallery_1", keyword: Key) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'gallery/index/0/1/?history=2&l_frm=Gallery_1', keyword: 'Key').and_return('')
         subject
       end
     end
@@ -156,7 +156,7 @@ describe ImasCG::Service do
     subject{ service.get_gallary('ざき') }
 
     it 'は戻り値を配列に変換する' do
-      expect( service ).to receive(:request).with(:post, 'gallery', keyword: 'ざき').and_return(html 'gallery_zaki.html')
+      expect( service ).to receive(:request).with(:post, 'gallery/index/0/1/?history=2&l_frm=Gallery_1', keyword: 'ざき').and_return(html 'gallery_zaki.html')
       expect( subject ).to eql [
         {name: '神崎蘭子', index: 95},
         {name: '岡崎泰葉', index: 119},
