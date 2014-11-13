@@ -185,10 +185,10 @@ describe ImasCG::Service do
     it 'は戻り値を配列に変換する' do
       expect( service ).to receive(:request).with(:post, 'gallery/index/0/1/?history=2&l_frm=Gallery_1', keyword: 'ざき').and_return(html 'gallery_zaki.html')
       expect( subject ).to eql [
-        {name: '神崎蘭子', index: 95},
-        {name: '岡崎泰葉', index: 119},
-        {name: '龍崎薫', index: 133},
-        {name: '仙崎恵磨', index: 165},
+        {name: '神崎蘭子', index: 98},
+        {name: '岡崎泰葉', index: 122},
+        {name: '龍崎薫', index: 137},
+        {name: '仙崎恵磨', index: 170},
       ]
     end
   end
