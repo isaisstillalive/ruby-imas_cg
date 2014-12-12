@@ -1,5 +1,6 @@
 # coding: utf-8
 
+require_relative 'imas_cg/version'
 require_relative 'imas_cg/service'
 require_relative 'imas_cg/idol'
 
