@@ -265,4 +265,55 @@ describe ImasCG::Service do
       })
     end
   end
+
+  describe '#get_auction_list' do
+    context 'に何も渡さなかった場合' do
+      subject{ service.get_auction_list() }
+
+      it 'は　#request(:post, "auction/search_top?l_frm=auction_1", attr: nil, rare: nil, cost: nil, keyword:: nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'auction/search_top?l_frm=auction_1', attr: nil, rare: nil, cost: nil, keyword: nil).and_return('')
+        subject
+      end
+    end
+
+    context 'にtypeを渡した場合' do
+      subject{ service.get_auction_list(type: :cute) }
+
+      it 'は　#request(:post, "auction/search_top?l_frm=auction_1", attr: 1, rare: nil, cost: nil, keyword:: nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'auction/search_top?l_frm=auction_1', attr: 1, rare: nil, cost: nil, keyword: nil).and_return('')
+        subject
+      end
+    end
+
+    context 'にcostを渡した場合' do
+      subject{ service.get_auction_list(cost: 10) }
+
+      it 'は　#request(:post, "auction/search_top?l_frm=auction_1", attr: nil, rare: nil, cost: 10, keyword:: nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'auction/search_top?l_frm=auction_1', attr: nil, rare: nil, cost: 10, keyword: nil).and_return('')
+        subject
+      end
+    end
+
+    context 'にidを渡した場合' do
+      subject{ service.get_auction_list(id: '3220801') }
+
+      it 'は　#request(:get, "auction/search_top/0/3220801?l_frm=auction_5", {}) を呼び出す' do
+        expect( service ).to receive(:request).with(:get, 'auction/search_top/0/3220801?l_frm=auction_5', {}).and_return('')
+        subject
+      end
+    end
+
+    subject{ service.get_auction_list() }
+
+    it 'は戻り値を配列に変換する' do
+      allow( service ).to receive(:request).and_return(html 'auction_search_top.html')
+      expect( subject ).to eql [
+        {name: '[ﾑｰﾝﾗｲﾄﾌﾗﾜｰ]相葉夕美+',      id: '0rEt5qpmYbo', want: { stamina: 1 }},
+        {name: '[3rdｱﾆﾊﾞｰｻﾘｰ･S]城ヶ崎美嘉+', id: 'ILAz1BxwtKk', want: { stamina: 18 }},
+        {name: '[3rdｱﾆﾊﾞｰｻﾘｰ･S]新田美波',    id: 'bJWPea4aXOg', want: { idol: ['[3rdｱﾆﾊﾞｰｻﾘｰ･S]日野茜', '[ｱﾆﾊﾞｰｻﾘｰﾌﾟﾘﾝｾｽ]神崎蘭子'] }},
+        {name: '[こぼれるｽﾏｲﾙ]今井加奈',     id: 'xYsGGLcOniY', want: { money: 2_000_000 }},
+        {name: '[3rdｱﾆﾊﾞｰｻﾘｰ･S]城ヶ崎美嘉',  id: 'IvAU6aemxMU', want: { energy: 9 }},
+      ]
+    end
+  end
 end

@@ -74,6 +74,43 @@ module ImasCG
       end
     end
 
+    def get_auction_list type: nil, cost: nil, keyword: nil, id: nil
+      if id
+        method = :get
+        url = "auction/search_top/0/#{id}?l_frm=auction_5"
+        options = {}
+      else
+        method = :post
+        url = 'auction/search_top?l_frm=auction_1'
+        options = {attr: nil, rare: nil, cost: cost, keyword: keyword}
+        options[:attr] = get_type_id(type) if type
+      end
+      request_list method, url, options, /<div class="idolStatus m-Btm15">.*?<div class="name">(?<name>.*?)<\/div>.*?<div class="pr want">.*?(?<want>(?:<li>.*?<\/li>)+)<\/ul>.*?<div class="m-Btm5">.*?search_contract%3Fid%3D(?<id>.{11}).*?<\/div>/m do |matched|
+        name, want_string, id = *matched
+
+        want = {}
+        want_string.force_encoding('UTF-8')
+        want_string.scan(/<li>(.*?)<\/li>/) do |values|
+          case values[0]
+          when /ｽﾀﾐﾅﾄﾞﾘﾝｸ \((\d+)\)/
+            want[:stamina] = $1.to_i
+          when /ｴﾅｼﾞｰﾄﾞﾘﾝｸ \((\d+)\)/
+            want[:energy] = $1.to_i
+          when /([\d,]+)ﾏﾆｰ/
+            want[:money] = $1.gsub(',', '').to_i
+          else
+            want[:idol] ||= []
+            want[:idol] << values[0]
+          end
+        end
+        {
+          name: name,
+          id: id,
+          want: want,
+        }
+      end
+    end
+
     def get_status
       source = get 'mypage'
       return nil if source.empty?
