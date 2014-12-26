@@ -53,7 +53,7 @@ module ImasCG
 
     def get_gallary params = {}
       type = get_type_id params[:type]
-      request_list :post, "gallery/index/#{type}/1/?history=2&l_frm=Gallery_1", { keyword: params[:keyword] }, /<a href='http:\/\/sp\.pf\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'[^>]*>.*?<div class="idol" style="background: url\(http:\/\/125\.6\.169\.35\/idolmaster\/image_sp\/card\/quest\/(?<hash>[0-9a-f]{32})\.png\?v=\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
+      request_list :post, "gallery/index/#{type}/1/?history=2&l_frm=Gallery_1", { keyword: params[:keyword] }, /<a href='http:\/\/sp\.pf\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'[^>]*>.*?<div class="idol" style="background: url\(http:\/\/sp\.pf-img-a\.mbga\.jp\/12008305\/\?guid=ON&url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fimage_sp%2Fcard%2Fquest%2F(?<hash>[0-9a-f]{32})\.png%3Fv%3D\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
         index, hash, name = *matched
         {
           index: index.to_i,
