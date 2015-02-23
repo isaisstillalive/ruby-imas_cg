@@ -182,7 +182,10 @@ module ImasCG
       def call env
         env[:request_headers]['User-Agent'] = 'Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ (KHTML, like Gecko) Safari/999.9'
         env[:request_headers]['Cookie'] = "sp_mbga_sid_#{@mbga_app}=#{env[:request_headers]['Sid']}"
-        mobage_path = 'http://125.6.169.35/idolmaster/' + env[:url].path
+
+        mobage_path = 'http://125.6.169.35/idolmaster'
+        mobage_path << '/' unless env[:url].path[0] == '/'
+        mobage_path += env[:url].path
         mobage_path += '?' + env[:url].query unless env[:url].query.nil?
         path = URI.encode_www_form_component(mobage_path)
         env[:url] += "/#{@mbga_app}/?guid=ON&url=#{path}"
