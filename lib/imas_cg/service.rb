@@ -3,6 +3,7 @@
 module ImasCG
   require 'faraday'
   require 'JSON'
+  require 'date'
 
   require_relative 'wishlist'
   require_relative 'exception/maintenance'
@@ -126,6 +127,28 @@ module ImasCG
         money: match[:money].gsub(',', '').to_i,
         fan: match[:fan].to_i,
       }
+    end
+
+    def get_cartoon_list page: 1, keyword: nil
+      if keyword
+        method = :post
+        action = 'search'
+        params = {keyword: keyword}
+      else
+        method = :get
+        action = 'index'
+        params = nil
+      end
+      url = "cartoon/#{action}/#{(page-1)*9}?l_frm=Cartoon_1"
+
+      request_list method, url, params, /<td align="center" valign="top" width="33%">\n<a href='.*?'><span class="a_link"><img src=".*?cartoon%2F\d*%2F(?<name>.*?)\.jpg" width="80"><\/span><\/a><br>\n【第(?<name>\d+?)話】<br \/>\n(?<date>.*?)\n<\/td>/m do |matched|
+        hash, number, date = *matched
+        {
+          number: number.to_i,
+          hash: hash,
+          date: Date.parse(date),
+        }
+      end.reverse
     end
 
     private

@@ -316,4 +316,73 @@ describe ImasCG::Service do
       ]
     end
   end
+
+  describe '#get_cartoon_list' do
+    context 'に何も渡さなかった場合' do
+      subject{ service.get_cartoon_list() }
+
+      it 'は　#request(:get, "cartoon/index/0?l_frm=Cartoon_1", nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:get, 'cartoon/index/0?l_frm=Cartoon_1', nil).and_return('')
+        subject
+      end
+    end
+
+    context 'に{page: 1}を渡した場合' do
+      subject{ service.get_cartoon_list(page: 1) }
+
+      it 'は　#request(:get, "cartoon/index/0?l_frm=Cartoon_1", nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:get, 'cartoon/index/0?l_frm=Cartoon_1', nil).and_return('')
+        subject
+      end
+    end
+
+    context 'に{page: 2}を渡した場合' do
+      subject{ service.get_cartoon_list(page: 2) }
+
+      it 'は　#request(:get, "cartoon/index/0?l_frm=Cartoon_1", nil) を呼び出す' do
+        expect( service ).to receive(:request).with(:get, 'cartoon/index/9?l_frm=Cartoon_1', nil).and_return('')
+        subject
+      end
+    end
+
+    context 'に{keyword: "Key"}を渡した場合' do
+      subject{ service.get_cartoon_list(keyword: 'Key') }
+
+      it 'は #request(:post, "cartoon/search/0?l_frm=Cartoon_1", keyword: Key) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'cartoon/search/0?l_frm=Cartoon_1', keyword: 'Key').and_return('')
+        subject
+      end
+    end
+
+    context 'に{keyword: "Key", page: 2}を渡した場合' do
+      subject{ service.get_cartoon_list(keyword: 'Key', page: 2) }
+
+      it 'は #request(:post, "cartoon/search/9?l_frm=Cartoon_1", keyword: Key) を呼び出す' do
+        expect( service ).to receive(:request).with(:post, 'cartoon/search/9?l_frm=Cartoon_1', keyword: 'Key').and_return('')
+        subject
+      end
+    end
+
+    subject{ service.get_cartoon_list() }
+
+    it 'は戻り値を配列に変換する' do
+      allow( service ).to receive(:request).and_return(html 'cartoon_search_kaoru_1.html')
+      expect( subject ).to eql [
+        # {number: 29,  hash: 'fb03578be1b721e550b87c5b47a52463', date: Date.parse('2012/08/30')},
+        # {number: 60,  hash: '01d4fc8cee3362c95e2df1f1a62b2d02', date: Date.parse('2012/12/14')},
+        # {number: 93,  hash: 'b978a80605beb02e38f5a3f0cd21936e', date: Date.parse('2013/03/28')},
+        # {number: 150, hash: 'a26c1130d360a0d0280badcbac388432', date: Date.parse('2013/09/09')},
+        # {number: 189, hash: 'a9c55bfcab8eed8ca34d5e1f2565ef2f', date: Date.parse('2013/11/20')},
+        {number: 190, hash: '2835c27fcadbe8d18a6e977650dd30d4', date: Date.parse('2013/11/21')},
+        {number: 283, hash: '3f3b991dc12bd073c04ac918e94f3731', date: Date.parse('2014/04/15')},
+        {number: 310, hash: 'c9ffc6e3c864ac3f400ecce81af0c191', date: Date.parse('2014/05/27')},
+        {number: 325, hash: 'cea391781e6cbb7d342e5f97cdac7762', date: Date.parse('2014/06/16')},
+        {number: 383, hash: '1ecadec10702639c94632f42da44d0a6', date: Date.parse('2014/09/19')},
+        {number: 400, hash: '96354af86dc3aa539ec26a1c7a482ae5', date: Date.parse('2014/10/20')},
+        {number: 473, hash: '0a6550d482bb63b9eb9b354f108b5e66', date: Date.parse('2015/03/04')},
+        {number: 512, hash: 'c3e215d930d6aaa6f95904c739dba7fc', date: Date.parse('2015/05/19')},
+        {number: 526, hash: '79c14058544e2ae998032e54026fe60b', date: Date.parse('2015/06/15')},
+      ]
+    end
+  end
 end
