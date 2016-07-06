@@ -54,7 +54,7 @@ module ImasCG
 
     def get_gallary params = {}
       type = get_type_id params[:type]
-      request_list :post, "gallery/index/#{type}/1/?history=2&l_frm=Gallery_1", { keyword: params[:keyword] }, /<a href='[^']*%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'[^>]*>.*?<div class="idol" style="background: url\([^)]*?card%2Fquest%2F(?<hash>[0-9a-f]{32})\.png%3Fv%3D\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)">(?<name>.*?)<\/div>/m do |matched|
+      request_list :post, "gallery/index/#{type}/1/?history=2&l_frm=Gallery_1", { keyword: params[:keyword] }, /<a href='[^']*%2Fidolmaster%2Fgallery%2Fdesc%2F(?<index>\d+)[^']*'[^>]*>.*?<div class="idol" style="background: url\([^)]*?card%2Fquest%2F(?<hash>[0-9a-f]{32})\.png%3Fv%3D\d+\)[^"]*?"><\/div>.*?<div class="name_(?:cute|cool|passion|trainer)"[^>]*>(?<name>.*?)<\/div>/m do |matched|
         index, hash, name = *matched
         {
           index: index.to_i,
