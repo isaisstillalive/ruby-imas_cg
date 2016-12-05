@@ -243,6 +243,58 @@ describe ImasCG::Service do
     end
   end
 
+  describe '#get_idol_detail' do
+    subject{ service.get_idol_detail('6bd01496d9b00da9563c7e92b6a40257') }
+
+    it 'は #request(:get, "idol_gallery/idol_detail/[id]", nil) を呼び出す' do
+      expect( service ).to receive(:request).with(:get, 'idol_gallery/idol_detail/6bd01496d9b00da9563c7e92b6a40257', nil).and_return(html 'idol_detail_kaoru.html')
+      subject
+    end
+
+    it 'は戻り値をハッシュの配列に変換する' do
+      expect( service ).to receive(:request).with(:get, 'idol_gallery/idol_detail/6bd01496d9b00da9563c7e92b6a40257', nil).and_return(html 'idol_detail_kaoru.html')
+      expect( subject.first[:data][:card_name] ).to eql '龍崎薫'
+      expect( subject.first[:data][:real_name] ).to eql '龍崎薫'
+      expect( subject.first[:data][:hash_card_id] ).to eql '6bd01496d9b00da9563c7e92b6a40257'
+      expect( subject.first[:profile][:card_id] ).to eql '3000401'
+    end
+
+    it 'は戻り値をページをまたいでもハッシュの配列に変換する' do
+      expect( service ).to receive(:request).with(:get, 'idol_gallery/idol_detail/6bd01496d9b00da9563c7e92b6a40257', nil).and_return(html 'idol_detail_kaoru.html')
+      expect( subject.map{ |id| id[:data][:card_name] } ).to eql [
+        '龍崎薫',
+        '龍崎薫+',
+        '[新春]龍崎薫',
+        '[新春]龍崎薫+',
+        '[ｺﾞｽﾍﾟﾙﾄﾞﾚｽ]龍崎薫',
+        '[ｺﾞｽﾍﾟﾙﾄﾞﾚｽ]龍崎薫+',
+        '[ﾏｰﾁﾝｸﾞﾊﾞﾝﾄﾞ]龍崎薫',
+        '[ﾏｰﾁﾝｸﾞﾊﾞﾝﾄﾞ]龍崎薫+',
+        '[ｴﾚｶﾞﾝﾄI.C]龍崎薫+',
+        '[ｳｨﾝﾀｰﾊﾞｶﾝｽ]龍崎薫',
+        '[ｳｨﾝﾀｰﾊﾞｶﾝｽ]龍崎薫+',
+        '[ｻﾝﾌﾗﾜｰｲｴﾛｰ]龍崎薫',
+        '[ｻﾝﾌﾗﾜｰｲｴﾛｰ]龍崎薫+',
+        '[桜色少女]龍崎薫',
+        '[桜色少女]龍崎薫+',
+        '[桜色ｽﾏｲﾙ]龍崎薫',
+        '[桜色ｽﾏｲﾙ]龍崎薫+',
+        '[ちびっこﾎﾟﾘｽ]龍崎薫',
+        '[ちびっこﾎﾟﾘｽ]龍崎薫+',
+        '[ﾊﾋﾟﾈｽﾁｱｰ]龍崎薫',
+        '[ﾊﾋﾟﾈｽﾁｱｰ]龍崎薫+',
+        '[ﾊﾂﾗﾂお嬢様]龍崎薫',
+        '[ﾊﾂﾗﾂお嬢様]龍崎薫+',
+        '[ﾊﾂﾗﾂお嬢様･S]龍崎薫',
+        '[ﾊﾂﾗﾂお嬢様･S]龍崎薫+',
+        '[元気のみなもと]龍崎薫',
+        '[元気のみなもと]龍崎薫+',
+        '[じょいふるｽﾃｯﾌﾟ]龍崎薫',
+        '[じょいふるｽﾃｯﾌﾟ]龍崎薫+',
+      ]
+    end
+  end
+
   describe '#get_status' do
     subject{ service.get_status }
 
