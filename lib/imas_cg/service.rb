@@ -60,6 +60,35 @@ module ImasCG
       end
     end
 
+    def get_idol_jsons hash
+      data = request :get, "idol_gallery/idol_detail/#{hash}"
+
+      character_id = /<input type="hidden" name="character_id" value="(\d+)">/.match(data)[1] rescue nil
+      idol_detail_list = JSON.parse(/idol.detail_list = (\[.*?\]);/m.match(data)[1])
+      idol_story_list = JSON.parse(/idol.idol_story_list = (\[.*?\]);/m.match(data)[1])
+
+      return character_id, idol_detail_list, idol_story_list
+    end
+
+    def get_idol_recommend_idols_2017 hash
+      data = request :get, "vote/idol_introduction/200006/#{hash}"
+      data.force_encoding('UTF-8')
+
+      return nil if data.empty?
+
+      title = /<div class="recommend_idol_title" style="[^"]+">(.*)<\/div>/.match(data)[1].gsub(/<\/?[^>]+>/, '')
+      comment = /<div class="comment_main_idol_bottom[^"]+">\n<div>(.*)<\/div>\n<\/div>/.match(data)[1].gsub('<br>', '')
+      idols = []
+      data.scan(/<img src='http:\/\/sp\.pf-img-a\.mbga\.jp\/12008305\/\?guid=ON&amp;url=http%3A%2F%2F125\.6\.169\.35%2Fidolmaster%2Fimage_sp%2Fcard%2Fxs%2F([0-9a-f]{32})\.jpg[^']+' class="recommend_idol_image">/) do |m|
+        idols << m[0]
+      end
+      return {
+        title: title,
+        comment: comment,
+        idols: idols,
+      }
+    end
+
     def get_auction_list type: nil, cost: nil, keyword: nil, id: nil
       if id
         method = :get
